@@ -6,6 +6,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -23,8 +24,18 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { workflowRunMetadata, workflowRuns, workflows } from "@/data/workflowsData"
+import { Columns } from "./Columns"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -39,25 +50,65 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
+  const [selectedWorkflow, setSelectedWorkflow] = React.useState<string>('all')
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [searchText, setSearchText] = React.useState<string>('')
+
+  const filteredData = React.useMemo(() => {
+    return workflowRuns.filter(run => {
+      const metadata = workflowRunMetadata.find(meta => meta.workflowRunId === run.workflowRunId)
+      return (
+        (selectedWorkflow === 'all' || run.workflowId === selectedWorkflow) &&
+        (!searchText || 
+          run.workflowRunId.toLowerCase().includes(searchText.toLowerCase()) ||
+          (metadata && metadata.error && metadata.error.toLowerCase().includes(searchText.toLowerCase()))
+        )
+      )
+    })
+  }, [searchText, selectedWorkflow])
 
   const table = useReactTable({
-    data,
-    columns,
+    data: filteredData,
+    columns: Columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       columnFilters,
+      columnVisibility
     }
   })
 
   return (
     <div>
       <div className="flex items-center py-4">
+      <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Workflows
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => setSelectedWorkflow('all')}
+            >
+              All Workflows
+            </DropdownMenuItem>
+            {workflows.map(workflow => (
+              <DropdownMenuItem
+                key={workflow.workflowId}
+                onClick={() => setSelectedWorkflow(workflow.workflowId)}
+              >
+                {workflow.name}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Input
           placeholder="Filter workflow run IDs..."
           value={(table.getColumn("workflowRunId")?.getFilterValue() as string) ?? ""}
@@ -66,6 +117,34 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter(
+                (column) => column.getCanHide()
+              )
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                )
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="rounded-md border">
         <Table>
