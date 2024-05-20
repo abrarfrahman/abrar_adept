@@ -18,7 +18,7 @@ export const CardWithFails: React.FC<CardWithFailsProps> = ({ selectedDate, onDa
   const [averageSuccessDuration, setAverageSuccessDuration] = useState<number>(0);
   const [averageFailedDuration, setAverageFailedDuration] = useState<number>(0);
 
-  const handleDateSelect = (date: Date) => {
+  const handleDateSelect = (date: Date | any) => {
     onDateSelect(date);
     // Calculate counts here
     const filteredRuns = workflowRuns.filter(run => {
