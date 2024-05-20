@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 export const Columns: ColumnDef<WorkflowRun>[] = [
     {
@@ -42,18 +42,48 @@ export const Columns: ColumnDef<WorkflowRun>[] = [
     },
     {
         accessorKey: "createdAt",
-        header: "Created At",
-        cell: ({ row }) => <div>{new Date(row.getValue("createdAt")).toLocaleString()}</div>,
+        header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                Created At
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            )
+        },
+        cell: ({ row }) => <div>{row.getValue("createdAt")}</div>,
     },
     {
         accessorKey: "version",
-        header: () => <div className="text-right">Version</div>,
-        cell: ({ row }) => <div className="text-right">{row.getValue("version")}</div>,
+        header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                Version
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            )
+          },
+          cell: ({ row }) => <div className="text-right">{row.getValue("version")}</div>,
     },
     {
         accessorKey: "duration",
-        header: () => <div className="text-right">Duration (ms)</div>,
-        cell: ({ row }) => {
+        header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                Duration
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            )
+          },
+          cell: ({ row }) => {
             const runId = row.getValue("workflowRunId")
             const metadata = workflowRunMetadata.find(meta => meta.workflowRunId === runId)
             return <div className="text-right">{metadata ? metadata.durationInMilliseconds : 'N/A'}</div>
