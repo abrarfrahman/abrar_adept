@@ -37,7 +37,7 @@ import { Input } from "@/components/ui/input"
 import { workflowRunMetadata, workflowRuns, workflows } from "@/data/workflowsData"
 import { Columns } from "./Columns"
 import { CardWithFails } from "./CardWithFails"
-import { Heading1 } from "lucide-react"
+import { CardOverall } from "./CardOverall"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -52,7 +52,9 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
+  const [selectedDate, setSelectedDate] = React.useState<Date>();
   const [selectedWorkflow, setSelectedWorkflow] = React.useState<string>('all')
+  const getSelectedWorkflow = () => selectedWorkflow;
   const selectedWorkflowName = workflows.find(workflow => workflow.workflowId === selectedWorkflow)?.name ?? 'All Workflows';
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [searchText, setSearchText] = React.useState<string>('')
@@ -98,7 +100,12 @@ export function DataTable<TData, TValue>({
       }}>
         🏃 Workflow Runs: {selectedWorkflowName}
       </h1>
-      <CardWithFails></CardWithFails>
+      <br/>
+      <div className="flex items-center py-4">
+        <CardWithFails selectedDate={selectedDate} onDateSelect={setSelectedDate} />
+        <CardOverall getSelectedWorkflow={getSelectedWorkflow} />
+      </div>
+    
       <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
