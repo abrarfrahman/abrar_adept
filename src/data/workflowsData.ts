@@ -19,9 +19,9 @@ export interface WorkflowRunMetadata {
 
 export const workflows: Workflow[] = [
     { 
-      workflowId: "5cf13c59-27c4-40a4-8565-2e31d6dfab88",
-      createdAt: "2023-11-08 21:55:58.838",
-      name: "Sample workflow 1"
+      "workflowId": "5cf13c59-27c4-40a4-8565-2e31d6dfab88",
+      "createdAt": "2023-11-08 21:55:58.838",
+      "name": "Sample workflow 1"
     },
     {
       "workflowId": "b78393f3-833a-4243-90f4-e617ec711e9c",

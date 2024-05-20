@@ -1,4 +1,5 @@
 "use client";
+import { CardWithFails } from "@/components/custom/CardWithFails";
 import { Columns } from "@/components/custom/Columns";
 import { DataTable } from "@/components/custom/DataTable";
 import { workflowRuns } from "@/data/workflowsData";

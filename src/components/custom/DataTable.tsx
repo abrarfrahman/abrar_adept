@@ -36,6 +36,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { workflowRunMetadata, workflowRuns, workflows } from "@/data/workflowsData"
 import { Columns } from "./Columns"
+import { CardWithFails } from "./CardWithFails"
+import { Heading1 } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -51,6 +53,7 @@ export function DataTable<TData, TValue>({
     []
   )
   const [selectedWorkflow, setSelectedWorkflow] = React.useState<string>('all')
+  const selectedWorkflowName = workflows.find(workflow => workflow.workflowId === selectedWorkflow)?.name ?? 'All Workflows';
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [searchText, setSearchText] = React.useState<string>('')
 
@@ -86,10 +89,20 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
+      <h1 style={{
+        fontSize: '2em',
+        fontWeight: 'bold',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5em'
+      }}>
+        🏃 Workflow Runs: {selectedWorkflowName}
+      </h1>
+      <CardWithFails></CardWithFails>
       <div className="flex items-center py-4">
-      <DropdownMenu>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button className="ml-auto">
               Workflows
             </Button>
           </DropdownMenuTrigger>
