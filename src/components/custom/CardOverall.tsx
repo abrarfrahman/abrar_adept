@@ -37,7 +37,7 @@ export const CardOverall: React.FC<CardOverallProps> = ({ getSelectedWorkflow })
         return metadata ? metadata.durationInMilliseconds : 0;
       });
       setSlowestWorkflowRun(Math.max(...durations));
-      setLongestWorkflowRun(Math.max(...durations));
+      setLongestWorkflowRun(Math.min(...durations));
 
       // Calculate overall number of calls
       setOverallCalls(filteredRuns.length);
@@ -53,8 +53,8 @@ export const CardOverall: React.FC<CardOverallProps> = ({ getSelectedWorkflow })
       {selectedWorkflow !== 'all' && (
         <CardContent>
           <p>Most High-Usage Date: {mostHighUsageDate}</p>
-          <p>Slowest Workflow Run: {slowestWorkflowRun} milliseconds</p>
-          <p>Longest Workflow Run: {longestWorkflowRun} milliseconds</p>
+          <p>Slowest Workflow Run: {slowestWorkflowRun} ms</p>
+          <p>Shortest Workflow Run: {longestWorkflowRun} ms</p>
           <p>Overall Number of Calls: {overallCalls}</p>
         </CardContent>
       )}
